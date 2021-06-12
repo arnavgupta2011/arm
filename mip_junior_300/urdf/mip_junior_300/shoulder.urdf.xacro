@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<!--
+Author: Luca Miller
+Date: 09/2020
+Xacro including MIP robotics junior 300 shoulder section
+-->
+<robot name="mip_junior_300_arm" xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                          Constants definition
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+  <!-- Robot's dimensions and mass-->
+  <xacro:property name="length" value="0.160"/>
+  <xacro:property name="width" value="0.160"/>
+  <xacro:property name="height" value="0.553"/>
+  <xacro:property name="mass" value="3"/>
+
+  <!-- Mechanical reductions -->
+  <xacro:property name="shoulder_mechanical_reduction" value="1"/>
+
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                Links
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+  <link name="Shoulder">
+    <xacro:visual_and_collision_using_mesh
+      filename="Shoulder/Shoulder"
+      roll="0" pitch="0" yaw="${-pi/2}"
+      x="-0.0997" y="${0.00965 + 0.022}" z="-0.0018"
+      color="blue" />
+      <xacro:inertial_matrix_box
+        mass="${mass}"
+        length="${length}"
+        width="${width}"
+        height="${height}"/>
+  </link>
+<gazebo reference="Shoulder">
+  <material> Gazebo/Blue</material>
+</gazebo>
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                              Joints
+
+///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+<joint name="Tower_Base_to_Shoulder" type="prismatic">
+  <parent link="Tower_Base"/>
+  <child link="Shoulder"/>
+  <axis xyz="0 0 1"/>
+  <limit
+    effort="1000.0"
+    lower="0.0"
+    upper="0.250"
+    velocity="${prismatic_joint_velocity_sim}"/>
+  <origin xyz="0.0018 0 0.01705"/>
+</joint>
+<xacro:my_transmission
+  parent="Tower_Base"
+  child="Shoulder"
+  type="translation"
+  mechanical_reduction="${shoulder_mechanical_reduction}"
+  hardware_interface="PositionJointInterface"/>
+
+  <gazebo reference="Tower_Base_to_Shoulder">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+
+</robot>

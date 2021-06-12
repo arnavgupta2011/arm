@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<!--
+Author: Carla
+Date: 07/2020
+Common things needed for other xacro files.
+Constants definition, macros, plugin ...
+-->
+
+<robot name="common" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Joint limits -->
+  <xacro:property name="revolute_joint_limit" value="${pi*118/180}"/>
+  <xacro:property name="prismatic_joint_limit" value="0.250"/>
+  <!-- Maximum joint velocity -->
+  <xacro:property name="revolute_joint_velocity" value="${pi*120/180}"/>
+  <xacro:property name="prismatic_joint_velocity" value="0.250"/>
+  <!-- Maximum joint velocity for the simulation-->
+  <xacro:property name="revolute_joint_velocity_sim" value="${8*pi}"/>
+  <xacro:property name="prismatic_joint_velocity_sim" value="10000"/>
+
+
+	<!-- Materials definition -->
+  <material name="blue">
+    <color rgba="0 0 0.8 1"/>
+  </material>
+  <material name="grey">
+    <color rgba="0.43 0.5 0.56 1"/>
+  </material>
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+  <material name="glass">
+    <color rgba="0 0 0.8 0.5"/>
+  </material>
+  <material name="glass_green">
+    <color rgba="0 0.8 0 0.5"/>
+  </material>
+
+
+  <!-- Macro for visual and collision using mesh -->
+  <xacro:macro name="visual_and_collision_using_mesh" params="filename roll pitch yaw x y z color">
+	   <visual>
+      <geometry>
+				<mesh filename="package://mip_junior_300/Junior_Class_Mesh/${filename}.stl" scale="0.001 0.001 0.001"/>
+				<!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="${roll} ${pitch} ${yaw}" xyz="${x} ${y} ${z}"/>
+      <material name="${color}"/>
+    </visual>
+    <collision>
+      <geometry>
+				<mesh filename="package://mip_junior_300/Junior_Class_Mesh/${filename}.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="${roll} ${pitch} ${yaw}" xyz="${x} ${y} ${z}"/>
+    </collision>
+  </xacro:macro>
+
+  <!-- Macro for visual and collision using mesh -->
+  <xacro:macro name="visual_and_collision_using_mesh_gripper" params="filename roll pitch yaw x y z color">
+     <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/${filename}.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="${roll} ${pitch} ${yaw}" xyz="${x} ${y} ${z}"/>
+      <material name="${color}"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/${filename}.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="${roll} ${pitch} ${yaw}" xyz="${x} ${y} ${z}"/>
+    </collision>
+  </xacro:macro>
+
+  <!-- Macro for the transmission -->
+<xacro:macro name="my_transmission" params="parent child type mechanical_reduction hardware_interface">
+  <!-- Transmission specification for Gazebo relates a joint to an actuator -->
+  <transmission name="${parent}_${type}">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="${parent}_motor">
+      <mechanicalReduction>${mechanical_reduction}</mechanicalReduction>
+    </actuator>
+    <joint name="${parent}_to_${child}">
+      <hardwareInterface>hardware_interface/${hardware_interface}</hardwareInterface>
+    </joint>
+  </transmission>
+</xacro:macro>
+
+<!-- Macro for box's inertia -->
+<xacro:macro name="inertial_matrix_box" params="mass length width height">
+  <inertial>
+    <mass value="${mass}"/>
+    <inertia ixx="${mass*(height*height+width*width)/12}" ixy="0.0" ixz="0.0" iyy="${mass*(length*length+height*height)/12}" iyz="0.0" izz="${mass*(length*length+width*width)/12}"/>
+  </inertial>
+</xacro:macro>
+
+<!-- Macro for cylinder's inertia -->
+<xacro:macro name="inertial_matrix_cylinder" params="mass length radius">
+  <inertial>
+    <mass value="${mass}"/>
+    <inertia ixx="${mass*(3*radius*radius+length*length)/12}" ixy="0.0" ixz="0.0" iyy="${mass*(3*radius*radius+length*length)/12}" iyz="0.0" izz="${mass*radius*radius/2}"/>
+  </inertial>
+</xacro:macro>
+
+<!-- link Gazebo and ROS-->
+<gazebo>
+  <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+    <robotNamespace>/mip_junior_300</robotNamespace>
+  </plugin>
+</gazebo>
+
+</robot>

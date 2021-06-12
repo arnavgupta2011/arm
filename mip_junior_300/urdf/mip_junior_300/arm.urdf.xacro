@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!--
+Author: Luca Miller
+Date: 09/2020
+Xacro including MIP robotics junior 300 arm section
+-->
+<robot name="mip_junior_300_arm" xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                          Constants definition
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+  <!-- Robot's dimensions and mass-->
+  <xacro:property name="length" value="0.160"/> <!-- ou 0.140?? -->
+  <xacro:property name="width" value="0.160"/>
+  <xacro:property name="height" value="0.553"/>
+  <xacro:property name="mass" value="3"/>
+
+  <!-- Mechanical reductions -->
+  <xacro:property name="arm_mechanical_reduction" value="1"/>
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                Links
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+  <link name="Arm_Arm_Metal">
+    <xacro:visual_and_collision_using_mesh
+      filename="Arm/Arm_Metal"
+      roll="0" pitch="0" yaw="${-pi/2}"
+      x="${-0.1575 - 0.032}" y="${0.001391 + 0.030}" z="-0.1541"
+      color="grey" />
+      <xacro:inertial_matrix_box
+        mass="${mass}"
+        length="${length}"
+        width="${width}"
+        height="${height}"/>
+  </link>
+  <gazebo reference="Arm_Arm_Metal">
+    <material> Gazebo/Grey</material>
+  </gazebo>
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+  <link name="Arm_Arm_Plastic">
+    <xacro:visual_and_collision_using_mesh
+      filename="Arm/Arm_Plastic"
+      roll="0" pitch="0" yaw="${-pi/2}"
+      x="${-0.1575 - 0.032}" y="${0.001391 + 0.030}"  z="-0.1541"
+      color="blue" />
+  </link>
+  <gazebo reference="Arm_Arm_Plastic">
+    <material> Gazebo/Blue</material>
+  </gazebo>
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                              Joints
+
+///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+<joint name="Shoulder_to_Arm_Arm_Metal" type="revolute">
+  <parent link="Shoulder"/>
+  <child link="Arm_Arm_Metal"/>
+  <origin xyz="0.0905 0 ${0.146 + 0.0063}"/>
+  <axis xyz="0 0 1"/>
+    <limit
+      effort="1000.0"
+      lower="${-revolute_joint_limit}"
+      upper="${revolute_joint_limit}"
+      velocity="${revolute_joint_velocity_sim}"/>
+</joint>
+<xacro:my_transmission
+  parent="Shoulder"
+  child="Arm_Arm_Metal"
+  type="rotation"
+  mechanical_reduction="${arm_mechanical_reduction}"
+  hardware_interface="PositionJointInterface"/>
+
+  <gazebo reference="Shoulder_to_Arm_Arm_Metal">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+<joint name="Arm_Arm_Plastic_" type="fixed">
+  <parent link="Arm_Arm_Metal"/>
+  <child link="Arm_Arm_Plastic"/>
+  <origin xyz="0 0 0"/>
+</joint>
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+
+</robot>

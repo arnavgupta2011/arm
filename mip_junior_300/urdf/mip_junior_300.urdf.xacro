@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+Author: Luca Miller
+Date: 09/2020
+Xacro including junior arm and end effector
+The end effector can be choosen by setting to true the right argument (for example TWO_FINGERS_GRIPPER)
+-->
+<robot name="mip_junior_300" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Common xacro needed -->
+  <xacro:include filename="$(find mip_junior_300)/urdf/common.urdf.xacro" />
+
+  <!-- junior arm -->
+  <xacro:include filename="$(find mip_junior_300)/urdf/mip_junior_300/tower.urdf.xacro" />
+  <xacro:include filename="$(find mip_junior_300)/urdf/mip_junior_300/shoulder.urdf.xacro" />
+  <xacro:include filename="$(find mip_junior_300)/urdf/mip_junior_300/arm.urdf.xacro" />
+  <xacro:include filename="$(find mip_junior_300)/urdf/mip_junior_300/forearm.urdf.xacro" />
+
+
+  <!-- gripper -->
+  <xacro:include filename="$(find mip_junior_300)/urdf/End_Effector_MIP/MIP_Gripper.urdf.xacro" />
+
+
+</robot>

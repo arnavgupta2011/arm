@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<launch>
+	
+	<param name="robot_description" textfile="$(find mip_junior_300)/urdf/model.urdf" />
+	<node
+    name="joint_state_publisher"
+    pkg="mip_junior_300"
+    type="joint_publisher.py"
+    	output="screen" />
+	<param name="use_gui" value="false" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find mip_junior_300)/launch/urdf.rviz" required="true" />
+</launch>

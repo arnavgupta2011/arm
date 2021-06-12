@@ -1,0 +1,307 @@
+<?xml version="1.0"?>
+<!--
+Author: Luca Miller
+Date: 09/2020
+Xacro MIP robotics Junior 300 Tower section
+-->
+<robot name="mip_junior_300_arm" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                          Constants definition
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+<!-- Robot's dimensions and mass-->
+<xacro:property name="length" value="0.160"/>
+<xacro:property name="width" value="0.160"/>
+<xacro:property name="height" value="0.553"/>
+<xacro:property name="mass" value="3"/>
+
+<!-- Mechanical reductions -->
+  <xacro:property name="Base_mechanical_reduction" value="1"/>
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                Links
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+  <!-- Used for fixing robot to Gazebo 'world' and putting the robot above the table -->
+  <!-- world link without inertia added because KDL does not support a root link with an inertia -->
+	<link name="world"/>
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+  <link name="Tower_Base">
+    <xacro:visual_and_collision_using_mesh
+      filename="Tower/Base"
+      roll="0" pitch="0" yaw="${-pi/2}"
+      x="-0.160" y="0.08" z="0"
+      color="grey" />
+      <xacro:inertial_matrix_box
+        mass="${mass}"
+        length="${length}"
+        width="${width}"
+        height="${height}"/>
+  </link>
+  <gazebo reference="Tower_Base">
+    <material> Gazebo/Grey</material>
+  </gazebo>
+
+  <link name="Tower_Outer_skin">
+    <xacro:visual_and_collision_using_mesh
+      filename="Tower/Outer_skin"
+      roll="0" pitch="0" yaw="${-pi/2}"
+      x="${0.019 - 0.0585}" y="${-0.025 + 0.057}" z="0"
+      color="grey" />
+ </link>
+ <gazebo reference="Tower_Outer_skin">
+   <material> Gazebo/Grey</material>
+ </gazebo>
+
+ <link name="Tower_Cable_Tower_to_Tablet">
+   <xacro:visual_and_collision_using_mesh
+     filename="Tower/Cable_Tower_to_Tablet"
+     roll="${-pi/2}" pitch="0" yaw="${-pi/2}"
+     x="-0.013" y="0" z="0"
+     color="black" />
+ </link>
+ <gazebo reference="Tower_Cable_Tower_to_Tablet">
+   <material> Gazebo/Black</material>
+ </gazebo>
+
+ <link name="Tower_Hat">
+   <xacro:visual_and_collision_using_mesh
+     filename="Tower/Hat"
+     roll="${pi/2}" pitch="0" yaw="${pi/2}"
+     x="${ - 0.0585}" y="${0.002 - 0.057}" z="-0.015"
+     color="blue" />
+</link>
+<gazebo reference="Tower_Hat">
+  <material> Gazebo/Blue</material>
+</gazebo>
+
+<link name="Tower_LED_Right">
+  <xacro:visual_and_collision_using_mesh
+    filename="Tower/LED_Right"
+    roll="${-pi/2}" pitch="0" yaw="${-pi/2}"
+    x="-0.0585" y="0" z="0"
+    color="glass_green" />
+</link>
+<gazebo reference="Tower_LED_Right">
+  <material> Gazebo/Green</material>
+</gazebo>
+
+<link name="Tower_LED_Left">
+  <xacro:visual_and_collision_using_mesh
+    filename="Tower/LED_Left"
+    roll="${pi/2}" pitch="${pi}" yaw="${-pi/2}"
+    x="0.0585" y="0" z="0"
+    color="glass_green" />
+</link>
+<gazebo reference="Tower_LED_Left">
+  <material> Gazebo/Green</material>
+</gazebo>
+
+<!--                                                  IO Card                                                      -->
+
+ <link name="Tower_IO_Card_IO_Protector">
+   <xacro:visual_and_collision_using_mesh
+     filename="Tower/IO_Card/IO_Protector"
+     roll="${-pi/2}" pitch="${pi}" yaw="${-pi/2}"
+     x="${-0.111}" y="${-0.05125 - 0.0475}" z="0"
+     color="blue" />
+</link>
+<gazebo reference="Tower_IO_Card_IO_Protector">
+  <material> Gazebo/Blue</material>
+</gazebo>
+
+<link name="Tower_IO_Card_IO_Screen_Protector">
+  <xacro:visual_and_collision_using_mesh
+    filename="Tower/IO_Card/IO_Screen_Protector"
+    roll="${pi/2}" pitch="0" yaw="${pi/2}"
+    x="0" y="-0.043" z="-0.04975"
+    color="glass" />
+</link>
+<gazebo reference="Tower_IO_Card_IO_Screen_Protector">
+  <material> Gazebo/Black</material>
+</gazebo>
+
+<link name="Tower_IO_Card_Power_Plug">
+   <xacro:visual_and_collision_using_mesh
+     filename="Tower/IO_Card/Power_Plug"
+     roll="${pi/2}" pitch="0" yaw="${-pi/2}"
+     x="0" y="0" z="0.00965"
+     color="black" />
+</link>
+<gazebo reference="Tower_IO_Card_Power_Plug">
+  <material> Gazebo/Black</material>
+</gazebo>
+
+<!--                                                  Screen                                               -->
+
+<link name="Tower_Screen_Tablet_case">
+  <xacro:visual_and_collision_using_mesh
+    filename="Tower/Screen/Tablet_case"
+    roll="${pi/2}" pitch="${pi/2}" yaw="${pi/2}"
+    x="-0.449" y="0.0231" z="0.0100"
+    color="blue" />
+</link>
+<gazebo reference="Tower_Screen_Tablet_case">
+  <material> Gazebo/Blue</material>
+</gazebo>
+
+<link name="Tower_Screen_Cable_Tablet_to_Tower">
+  <xacro:visual_and_collision_using_mesh
+    filename="Tower/Screen/Cable_Tablet_to_Tower"
+    roll="${pi}" pitch="0" yaw="${-pi/2}"
+    x="0" y="0" z="0.013"
+    color="black" />
+</link>
+<gazebo reference="Tower_Screen_Cable_Tablet_to_Tower">
+  <material> Gazebo/Black</material>
+</gazebo>
+
+<link name="Tower_Screen_Screen">
+  <xacro:visual_and_collision_using_mesh
+    filename="Tower/Screen/Screen"
+    roll="${-pi/2}" pitch="0" yaw="${-pi/2}"
+    x="-0.218" y="0.0583" z="0.1158"
+    color="black" />
+</link>
+<gazebo reference="Tower_Screen_Screen">
+  <material> Gazebo/Black</material>
+</gazebo>
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                              Joints
+
+///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+<joint name="Tower_Base_" type="fixed">
+  <parent link="world"/>
+  <child link="Tower_Base"/>
+  <origin xyz="-0.0915 0 0"/>
+</joint>
+
+<joint name="Tower_Outer_skin_" type="fixed">
+  <parent link="Tower_Base"/>
+  <child link="Tower_Outer_skin"/>
+  <origin xyz="-0.0585 0 0.2562"/>
+</joint>
+
+<joint name="Tower_Cable_Tower_to_Tablet_" type="fixed">
+  <parent link="Tower_Outer_skin"/>
+  <child link="Tower_Cable_Tower_to_Tablet"/>
+  <origin xyz="-0.0585 0.03 0.220"/>
+</joint>
+
+<joint name="Tower_Hat_" type="fixed">
+  <parent link="Tower_Outer_skin"/>
+  <child link="Tower_Hat"/>
+  <origin xyz="0 0 0.2537"/>
+</joint>
+
+<joint name="Tower_LED_Right_" type="fixed">
+  <parent link="Tower_Hat"/>
+  <child link="Tower_LED_Right"/>
+  <origin xyz="0 -0.047 0.025"/>
+</joint>
+
+<joint name="Tower_LED_Left_" type="fixed">
+  <parent link="Tower_Hat"/>
+  <child link="Tower_LED_Left"/>
+  <origin xyz="0 0.047 0.025"/>
+</joint>
+
+<!--                                                  IO Card                                                      -->
+
+<joint name="Tower_IO_Card_IO_Protector_" type="fixed">
+  <parent link="Tower_Outer_skin"/>
+  <child link="Tower_IO_Card_IO_Protector"/>
+  <origin xyz="-0.0585 0 -0.1505"/>
+</joint>
+
+<joint name="Tower_IO_Card_IO_Screen_Protector_" type="fixed">
+  <parent link="Tower_IO_Card_IO_Protector"/>
+  <child link="Tower_IO_Card_IO_Screen_Protector"/>
+  <origin xyz="-0.0325 0 0.0164"/>
+</joint>
+
+<joint name="Tower_IO_Card_Power_Plug_" type="fixed">
+  <parent link="Tower_IO_Card_IO_Protector"/>
+  <child link="Tower_IO_Card_Power_Plug"/>
+  <origin xyz="-0.031 0 ${-0.0935 + 0.006}"/>
+</joint>
+
+<!--                                                  Sc"-0.0585reen                                               -->
+
+<joint name="Tower_Screen_Tablet_case_" type="fixed">
+  <parent link="Tower_Outer_skin"/>
+  <child link="Tower_Screen_Tablet_case"/>
+  <origin xyz="-0.0585 -0.040 0"/>
+</joint>
+
+<joint name="Tower_Screen_Cable_Tablet_to_Tower_" type="fixed">
+  <parent link="Tower_Screen_Tablet_case"/>
+  <child link="Tower_Screen_Cable_Tablet_to_Tower"/>
+  <origin xyz="-0.0225 0.072 0.099"/>
+</joint>
+
+<joint name="Tower_Screen_Screen_" type="fixed">
+  <parent link="Tower_Screen_Tablet_case"/>
+  <child link="Tower_Screen_Screen"/>
+  <origin xyz="-0.064 -0.026 -0.057"/>
+</joint>
+
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+<!--
+<joint name="m1_to_m2" type="prismatic">
+  <parent link="m1"/>
+  <child link="m2"/>
+  <axis xyz="0 0 1"/>
+  <limit
+    effort="1000.0"
+    lower="0.1"
+    upper="0.1"
+    velocity="${prismatic_joint_velocity_sim}"/>
+  <origin xyz="0 0 0"/>
+</joint>
+-->
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                              Gazebo colours
+
+///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+<!--
+<gazebo reference="m1">
+  <material> Gazebo/Blue</material>
+</gazebo>
+-->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                              Gazebo transmissions
+
+///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+<!--
+<xacro:my_transmission
+  parent="m1"
+  child="m2"
+  type="translation"
+  mechanical_reduction="${m1_mechanical_reduction}"
+  hardware_interface="PositionJointInterface"/>
+
+<gazebo reference="m1_to_m2">
+  <implicitSpringDamper>1</implicitSpringDamper>
+</gazebo>
+-->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+
+</robot>

@@ -1,0 +1,28 @@
+arm:
+  joint_state_controller:
+      type: joint_state_controller/JointStateController
+      publish_rate: 20
+
+  joint1:
+      type: effort_controllers/JointEffortController
+      joint: prismatic1
+      
+  joint2:
+      type: effort_controllers/JointEffortController
+      joint: revolute1
+      
+  joint3:
+      type: effort_controllers/JointEffortController
+      joint: revolute2
+     
+  joint4:
+      type: effort_controllers/JointEffortController
+      joint: revolute3
+     
+  joint5:
+      type: effort_controllers/JointEffortController
+      joint: EE_left
+  
+  joint6:
+      type: effort_controllers/JointEffortController
+      joint: EE_right   

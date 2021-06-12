@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<launch>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="debug" value="false" />
+    <arg name="gui" value="true" />
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="headless" value="false"/>
+  </include>
+
+  
+  <param name="robot_description" command="cat $(find mip_junior_300)/urdf/model.urdf"/>
+
+  <node name="urdf_spawner" 
+	pkg="gazebo_ros" 
+	type="spawn_model"
+        args="-file $(find mip_junior_300)/urdf/model.urdf -urdf -model mip_junior_300 -x 0 -y 0 -z 0 -R 0 -P 0 -Y 0"
+	respawn="false" 
+	output="screen" />
+  <node
+    name="joint_state_publisher_gui"
+    pkg="mip_junior_300"
+    type="data_converter.py" />
+
+<!-- loads the controllers -->
+ <rosparam file="$(find mip_junior_300)/config/controller.yaml" command="load" />
+
+  <node name="controller_spawner" 
+	pkg="controller_manager" 
+	type="spawner" 
+	ns="/arm" 
+	args="joint1 joint2 joint3 joint4 joint5 joint6 joint_state_controller"/> 
+	
+  <node name="robot_state_publisher" 
+	pkg="robot_state_publisher" 
+	type="robot_state_publisher" 
+	respawn="false" 
+	output="screen">
+	<remap from="/joint_states" to="/arm/joint_states" />
+  </node>
+
+</launch>

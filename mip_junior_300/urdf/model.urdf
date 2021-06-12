@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name="mip_junior_300">
+  <!-- Materials definition -->
+  <material name="blue">
+    <color rgba="0 0 0.8 1"/>
+  </material>
+  <material name="white">
+    <color rgba="0.43 0.5 0.56 1"/>
+  </material>
+  <material name="grey">
+    <color rgba="1 1 1 1"/>
+  </material>
+  <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+  <material name="glass">
+    <color rgba="0 0 0.8 0.5"/>
+  </material>
+  <material name="glass_green">
+    <color rgba="0 0.8 0 0.5"/>
+  </material>
+  <!-- link Gazebo and ROS-->
+  <gazebo>
+    <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+      <robotNamespace>/arm</robotNamespace>
+    </plugin>
+  </gazebo>
+  
+ 
+
+  <link name="world"/>
+
+  
+  <link name="Tower_Base">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/meshes/Tower/Base.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="-0.16 0.08 0"/>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/meshes/Tower/Base.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="-0.16 0.08 0"/>
+    </collision>
+    <inertial>
+      <mass value="3"/>
+      <inertia ixx="0.08285225" ixy="0.0" ixz="0.0" iyy="0.08285225" iyz="0.0" izz="0.0128"/>
+    </inertial>
+  </link>
+  <gazebo reference="Tower_Base">
+    <material> Gazebo/white</material>
+  </gazebo>
+
+
+
+
+  <link name="Tower_Outer_skin">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/meshes/Tower/Outer_skin.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="-0.0395 0.032 0"/>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/meshes/Tower/Outer_skin.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="-0.0395 0.032 0"/>
+    </collision>
+  </link>
+  <gazebo reference="Tower_Outer_skin">
+    <material> Gazebo/white</material>
+  </gazebo>
+
+  
+
+  <joint name="Tower_Base_" type="fixed">
+    <parent link="world"/>
+    <child link="Tower_Base"/>
+    <origin xyz="-0.0915 0 0"/>
+  </joint>
+  <joint name="Tower_Outer_skin_" type="fixed">
+    <parent link="Tower_Base"/>
+    <child link="Tower_Outer_skin"/>
+    <origin xyz="-0.0585 0 0.2562"/>
+  </joint>
+
+ 
+ 
+
+  <link name="Shoulder">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/meshes/Shoulder/Shoulder.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="-0.0997 0.03165 -0.0018"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/meshes/Shoulder/Shoulder.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="-0.0997 0.03165 -0.0018"/>
+    </collision>
+    <inertial>
+      <mass value="3"/>
+      <inertia ixx="0.08285225" ixy="0.0" ixz="0.0" iyy="0.08285225" iyz="0.0" izz="0.0128"/>
+    </inertial>
+  </link>
+  <gazebo reference="Shoulder">
+    <material> Gazebo/Blue</material>
+  </gazebo>
+
+
+
+
+  <joint name="prismatic1" type="prismatic">
+    <parent link="Tower_Base"/>
+    <child link="Shoulder"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="10000.0" lower="0.0" upper="0.255" velocity="10000"/>
+    <origin xyz="0.0018 0 0.01705"/>
+  </joint>
+  <!-- Transmission specification for Gazebo relates a joint to an actuator -->
+  <transmission name="Tower_Base_translation">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="Tower_Base_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="prismatic1">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  <gazebo reference="Tower_Base_to_Shoulder">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+
+
+  
+  <link name="Arm_Arm_Metal">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/meshes/Arm/Arm_Metal.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="-0.1895 0.031391 -0.1541"/>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/meshes/Arm/Arm_Metal.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="-0.1895 0.031391 -0.1541"/>
+    </collision>
+    <inertial>
+      <mass value="3"/>
+      <inertia ixx="0.08285225" ixy="0.0" ixz="0.0" iyy="0.08285225" iyz="0.0" izz="0.0128"/>
+    </inertial>
+  </link>
+  <gazebo reference="Arm_Arm_Metal">
+    <material> Gazebo/Grey</material>
+  </gazebo>
+  
+
+
+
+  <joint name="revolute1" type="revolute">
+    <parent link="Shoulder"/>
+    <child link="Arm_Arm_Metal"/>
+    <origin xyz="0.0905 0 0.1523"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-2.05948851735" upper="2.05948851735" velocity="25.1327412287"/>
+  </joint>
+  <!-- Transmission specification for Gazebo relates a joint to an actuator -->
+  <transmission name="Shoulder_rotation">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="Shoulder_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="revolute1">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  <gazebo reference="revolute1">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+ 
+
+
+  
+  <link name="Forearm_Forearm_Metal">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/meshes/Forearm/Forearm_Metal.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="-0.49 0.03154 -0.0993"/>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/meshes/Forearm/Forearm_Metal.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="-0.49 0.03154 -0.0993"/>
+    </collision>
+    <inertial>
+      <mass value="3"/>
+      <inertia ixx="0.08285225" ixy="0.0" ixz="0.0" iyy="0.08285225" iyz="0.0" izz="0.0128"/>
+    </inertial>
+  </link>
+  <gazebo reference="Forearm_Forearm_Metal">
+    <material> Gazebo/Grey</material>
+  </gazebo>
+ 
+  
+
+  <joint name="revolute2" type="revolute">
+    <parent link="Arm_Arm_Metal"/>
+    <child link="Forearm_Forearm_Metal"/>
+    <origin xyz="0.300 0 -0.055"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-2.05948851735" upper="2.05948851735" velocity="25.1327412287"/>
+  </joint>
+  <!-- Transmission specification for Gazebo relates a joint to an actuator -->
+  <transmission name="Arm_Arm_Metal_rotation">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="Arm_Arm_Metal_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="revolute2">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  <gazebo reference="revolute2">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+ 
+  
+  <link name="End_Effector_MIP_Gripper_Interface">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Gripper_Interface.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="0 0 0.0115"/>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Gripper_Interface.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 -1.57079632679" xyz="0 0 0.0115"/>
+    </collision>
+    <inertial>
+      <mass value="3"/>
+      <inertia ixx="0.08285225" ixy="0.0" ixz="0.0" iyy="0.08285225" iyz="0.0" izz="0.0128"/>
+    </inertial>
+  </link>
+  <gazebo reference="End_Effector_MIP_Gripper_Interface">
+    <material> Gazebo/Grey</material>
+  </gazebo>
+
+
+
+  <link name="End_Effector_MIP_Hull_Left">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Hull_Left.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.0118 -0.02645 -0.038"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Hull_Left.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.0118 -0.02645 -0.038"/>
+    </collision>
+  </link>
+  <gazebo reference="End_Effector_MIP_Hull_Left">
+    <material> Gazebo/Blue</material>
+  </gazebo>
+
+
+
+  <link name="End_Effector_MIP_Hull_Right">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Hull_Right.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="0 0 0" xyz="-0.0373 -0.0249 -0.0574"/>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Hull_Right.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="-0.0373 -0.0249 -0.0574"/>
+    </collision>
+  </link>
+  <gazebo reference="End_Effector_MIP_Hull_Right">
+    <material> Gazebo/Blue</material>
+  </gazebo>
+
+
+
+  <link name="End_Effector_MIP_Finger_Right">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Finger_Right.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="0 0 3.14159265359" xyz="0.0012 -0.00375 -0.0097"/>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Finger_Right.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 3.14159265359" xyz="0.0012 -0.00375 -0.0097"/>
+    </collision>
+  </link>
+  <gazebo reference="End_Effector_MIP_Finger_Right">
+    <material> Gazebo/Gray</material>
+  </gazebo>
+
+
+
+  <link name="End_Effector_MIP_Finger_Left">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Finger_Left.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.0012 0.00375 -0.0097"/>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Finger_Left.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.0012 0.00375 -0.0097"/>
+    </collision>
+  </link>
+  <gazebo reference="End_Effector_MIP_Finger_Left">
+    <material> Gazebo/Gray</material>
+  </gazebo>
+
+
+
+  <link name="End_Effector_MIP_Tooth_Right">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Tooth.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="1.57079632679 0 1.57079632679" xyz="0 0.0078 -0.016"/>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Tooth.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="1.57079632679 0 1.57079632679" xyz="0 0.0078 -0.016"/>
+    </collision>
+    <inertial>
+      <mass value="3"/>
+      <inertia ixx="0.08285225" ixy="0.0" ixz="0.0" iyy="0.08285225" iyz="0.0" izz="0.0128"/>
+    </inertial>
+  </link>
+  <gazebo reference="End_Effector_MIP_Tooth_Right">
+    <material> Gazebo/Gray</material>
+  </gazebo>
+
+
+
+
+  <link name="End_Effector_MIP_Tooth_Left">
+    <visual>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Tooth.stl" scale="0.001 0.001 0.001"/>
+        <!-- scaling factor needed because stl files are in mm and ROS is in m -->
+      </geometry>
+      <origin rpy="1.57079632679 0 -1.57079632679" xyz="0 -0.0078 -0.016"/>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://mip_junior_300/End_Effector_MIP/End_Effector_MIP/Tooth.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <origin rpy="1.57079632679 0 -1.57079632679" xyz="0 -0.0078 -0.016"/>
+    </collision>
+    <inertial>
+      <mass value="3"/>
+      <inertia ixx="0.08285225" ixy="0.0" ixz="0.0" iyy="0.08285225" iyz="0.0" izz="0.0128"/>
+    </inertial>
+  </link>
+  <gazebo reference="End_Effector_MIP_Tooth_Left">
+    <material> Gazebo/Gray</material>
+  </gazebo>
+
+
+  <joint name="box_l" type="fixed">
+    <parent link="End_Effector_MIP_Gripper_Interface"/>
+    <child link="End_Effector_MIP_Hull_Left"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+  <joint name="box_r" type="fixed">
+    <parent link="End_Effector_MIP_Hull_Left"/>
+    <child link="End_Effector_MIP_Hull_Right"/>
+    <origin xyz="0.0578 0.074 0.0056"/>
+  </joint>
+  
+
+
+  <joint name="revolute3" type="revolute">
+    <parent link="Forearm_Forearm_Metal"/>
+    <child link="End_Effector_MIP_Gripper_Interface"/>
+    <origin xyz="0.3 0 -0.0451"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1000.0" lower="-2.05948851735" upper="2.05948851735" velocity="25.1327412287"/>
+  </joint>
+  <!-- Transmission specification for Gazebo relates a joint to an actuator -->
+  <transmission name="Forearm_Forearm_Metal_rotation">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="Forearm_Forearm_Metal_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="revolute3">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  <gazebo reference="revolute3">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+ 
+
+
+  <joint name="End_Effector_MIP_Finger_Right_" type="fixed">
+    <parent link="End_Effector_MIP_Tooth_Right"/>
+    <child link="End_Effector_MIP_Finger_Right"/>
+    <origin xyz="0 0.0115 0.017"/>
+  </joint>
+  <joint name="End_Effector_MIP_Finger_Left_" type="fixed">
+    <parent link="End_Effector_MIP_Tooth_Left"/>
+    <child link="End_Effector_MIP_Finger_Left"/>
+    <origin xyz="0 -0.0115 0.017"/>
+  </joint>
+ 
+
+
+  <joint name="EE_right" type="prismatic">
+    <parent link="End_Effector_MIP_Gripper_Interface"/>
+    <child link="End_Effector_MIP_Tooth_Right"/>
+    <origin xyz="0 -0.022 -0.08"/>
+    <axis xyz="0 -0.1 0"/>
+    <limit effort="1000.0" lower="0.0" upper="0.012" velocity="10000"/>
+  </joint>
+  <!-- Transmission specification for Gazebo relates a joint to an actuator -->
+  <transmission name="End_Effector_MIP_Gripper_Interface_translation">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="End_Effector_MIP_Gripper_Interface_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="EE_right">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  <gazebo reference="EE_right">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+  
+
+
+  <joint name="EE_left" type="prismatic">
+    <parent link="End_Effector_MIP_Gripper_Interface"/>
+    <child link="End_Effector_MIP_Tooth_Left"/>
+    <origin xyz="0 0.022 -0.08"/>
+    <axis xyz="0 0.1 0"/>
+    <limit effort="1000.0" lower="0.0" upper="0.012" velocity="10000"/>
+  </joint>
+  <!-- Transmission specification for Gazebo relates a joint to an actuator -->
+  <transmission name="End_Effector_MIP_Gripper_Interface_translation">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="End_Effector_MIP_Gripper_Interface_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="EE_left">
+      <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  <gazebo reference="EE_left">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+  
+
+
+  <gazebo>
+    <plugin filename="libgazebo_grasp_fix.so" name="gazebo_grasp_fix">
+      <arm>
+        <arm_name> mip_junior_300_arm </arm_name>
+        <palm_link> End_Effector_MIP_Gripper_Interface  </palm_link>
+        <gripper_link> End_Effector_MIP_Tooth_Left </gripper_link>
+        <gripper_link> End_Effector_MIP_Tooth_Right </gripper_link>
+      </arm>
+      <forces_angle_tolerance>100</forces_angle_tolerance>
+      <!-- 100 in example -->
+      <update_rate>100</update_rate>
+      <!--4 in example-->
+      <grip_count_threshold>2</grip_count_threshold>
+      <!--4 in example -->
+      <max_grip_count>4</max_grip_count>
+      <!--8 in example-->
+      <release_tolerance>0.007</release_tolerance>
+      <!--0.005 in example -->
+      <disable_collisions_on_attach>false</disable_collisions_on_attach>
+      <!-- false in example -->
+      <contact_topic>__default_topic__</contact_topic>
+    </plugin>
+  </gazebo>
+ 
+</robot>
+

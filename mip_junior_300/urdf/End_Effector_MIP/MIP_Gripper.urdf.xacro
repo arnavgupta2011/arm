@@ -1,0 +1,265 @@
+<?xml version="1.0"?>
+<!--
+Author: Luca Miller
+Date: 09/2020
+Xacro for MIP robotics Gripper
+-->
+<robot name="mip_gripper" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                          Constants definition
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+  <!-- Robot's dimensions and mass-->
+  <xacro:property name="length" value="0.160"/>
+  <xacro:property name="width" value="0.160"/>
+  <xacro:property name="height" value="0.553"/>
+  <xacro:property name="mass" value="3"/>
+
+  <!-- Mechanical reductions -->
+  <xacro:property name="gripper_mechanical_reduction" value="1"/>
+  <xacro:property name="finger_mechanical_reduction" value="1"/>
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                Links
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+  <link name="End_Effector_MIP_Gripper_Interface">
+    <xacro:visual_and_collision_using_mesh_gripper
+      filename="End_Effector_MIP/Gripper_Interface"
+      roll="0" pitch="0" yaw="${-pi/2}"
+      x="0" y="0" z="0.0115"
+      color="grey" />
+      <xacro:inertial_matrix_box
+        mass="${mass}"
+        length="${length}"
+        width="${width}"
+        height="${height}"/>
+  </link>
+  <gazebo reference="End_Effector_MIP_Gripper_Interface">
+    <material> Gazebo/Grey</material>
+  </gazebo>
+
+  <link name="End_Effector_MIP_Hull_Left">
+    <xacro:visual_and_collision_using_mesh_gripper
+      filename="End_Effector_MIP/Hull_Left"
+      roll="0" pitch="0" yaw="0"
+      x="${0.0485 - 0.0367}" y="${0.02755 - 0.054}" z="-0.038"
+      color="blue" />
+  </link>
+  <gazebo reference="End_Effector_MIP_Hull_Left">
+    <material> Gazebo/Blue</material>
+  </gazebo>
+
+  <link name="End_Effector_MIP_Hull_Right">
+    <xacro:visual_and_collision_using_mesh_gripper
+      filename="End_Effector_MIP/Hull_Right"
+      roll="0" pitch="0" yaw="0"
+      x="${ -0.0373 }" y="${ -0.0249 }" z="${-0.0574 }"
+      color="blue" />
+  </link>
+  <gazebo reference="End_Effector_MIP_Hull_Right">
+    <material> Gazebo/Blue</material>
+  </gazebo>
+
+  <link name="End_Effector_MIP_Finger_Right">
+    <xacro:visual_and_collision_using_mesh_gripper
+      filename="End_Effector_MIP/Finger_Right"
+      roll="0" pitch="0" yaw="${pi}"
+      x="${ -0.0198 + 0.021 }" y="-0.00375" z="${-0.0197 + 0.01}"
+      color="grey" />
+  </link>
+  <gazebo reference="End_Effector_MIP_Finger_Right">
+    <material> Gazebo/Gray</material>
+  </gazebo>
+
+  <link name="End_Effector_MIP_Finger_Left">
+    <xacro:visual_and_collision_using_mesh_gripper
+      filename="End_Effector_MIP/Finger_Left"
+      roll="0" pitch="0" yaw="0"
+      x="${ -0.0198 + 0.021 }" y="0.00375" z="${-0.0197 + 0.01}"
+      color="grey" />
+  </link>
+  <gazebo reference="End_Effector_MIP_Finger_Left">
+    <material> Gazebo/Gray</material>
+  </gazebo>
+
+  <link name="End_Effector_MIP_Tooth_Right">
+    <xacro:visual_and_collision_using_mesh_gripper
+      filename="End_Effector_MIP/Tooth"
+      roll="${pi/2}" pitch="0" yaw="${pi/2}"
+      x="${0}" y="${0.0078}" z="${-0.016}"
+      color="grey" />
+      <xacro:inertial_matrix_box
+        mass="${mass}"
+        length="${length}"
+        width="${width}"
+        height="${height}"/>
+  </link>
+  <gazebo reference="End_Effector_MIP_Tooth_Right">
+    <material> Gazebo/Gray</material>
+  </gazebo>
+
+  <link name="End_Effector_MIP_Tooth_Left">
+    <xacro:visual_and_collision_using_mesh_gripper
+      filename="End_Effector_MIP/Tooth"
+      roll="${pi/2}" pitch="0" yaw="${-pi/2}"
+      x="${0}" y="${-0.0078}" z="${-0.016}"
+      color="grey" />
+      <xacro:inertial_matrix_box
+        mass="${mass}"
+        length="${length}"
+        width="${width}"
+        height="${height}"/>
+  </link>
+  <gazebo reference="End_Effector_MIP_Tooth_Left">
+    <material> Gazebo/Gray</material>
+  </gazebo>
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                Joints
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+  <joint name="End_Effector_MIP_Hull_Left_" type="fixed">
+    <parent link="End_Effector_MIP_Gripper_Interface"/>
+    <child link="End_Effector_MIP_Hull_Left"/>
+    <origin xyz="0 0 0"/>
+  </joint>
+
+  <joint name="End_Effector_MIP_Hull_Right_" type="fixed">
+    <parent link="End_Effector_MIP_Hull_Left"/>
+    <child link="End_Effector_MIP_Hull_Right"/>
+    <origin xyz="0.0578 0.074 0.0056"/>
+  </joint>
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                            Join with robot
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+  <joint name="Forearm_Forearm_Metal_to_End_Effector_MIP_Gripper_Interface" type="revolute">
+    <parent link="Forearm_Forearm_Metal"/>
+    <child link="End_Effector_MIP_Gripper_Interface"/>
+    <origin xyz="0.3 0 -0.0451"/>
+    <axis xyz="0 0 1"/>
+    <limit
+      effort="1000.0"
+      lower="${-revolute_joint_limit}"
+      upper="${revolute_joint_limit}"
+      velocity="${revolute_joint_velocity_sim}"/>
+  </joint>
+
+  <xacro:my_transmission
+    parent="Forearm_Forearm_Metal"
+    child="End_Effector_MIP_Gripper_Interface"
+    type="rotation"
+    mechanical_reduction="${gripper_mechanical_reduction}"
+    hardware_interface="PositionJointInterface"/>
+
+    <gazebo reference="Forearm_Forearm_Metal_to_End_Effector_MIP_Gripper_Interface">
+      <implicitSpringDamper>1</implicitSpringDamper>
+    </gazebo>
+
+    <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                  Fingers
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+    <joint name="End_Effector_MIP_Finger_Right_" type="fixed">
+      <parent link="End_Effector_MIP_Tooth_Right"/>
+      <child link="End_Effector_MIP_Finger_Right"/>
+      <origin xyz="0 0.0115 0.017"/>
+    </joint>
+
+    <joint name="End_Effector_MIP_Finger_Left_" type="fixed">
+      <parent link="End_Effector_MIP_Tooth_Left"/>
+      <child link="End_Effector_MIP_Finger_Left"/>
+      <origin xyz="0 -0.0115 0.017"/>
+    </joint>
+
+    <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+    <joint name="End_Effector_MIP_Gripper_Interface_to_End_Effector_MIP_Tooth_Right" type="prismatic">
+      <parent link="End_Effector_MIP_Gripper_Interface"/>
+      <child link="End_Effector_MIP_Tooth_Right"/>
+      <origin xyz="0 -0.022 -0.08"/>
+      <axis xyz="0 -0.1 0"/>
+      <limit
+        effort="1000.0"
+        lower="0.0"
+        upper="0.012"
+        velocity="${prismatic_joint_velocity_sim}"/>
+    </joint>
+
+    <xacro:my_transmission
+      parent="End_Effector_MIP_Gripper_Interface"
+      child="End_Effector_MIP_Tooth_Right"
+      type="translation"
+      mechanical_reduction="${finger_mechanical_reduction}"
+      hardware_interface="PositionJointInterface"/>
+
+      <gazebo reference="End_Effector_MIP_Gripper_Interface_to_End_Effector_MIP_Tooth_Right">
+        <implicitSpringDamper>1</implicitSpringDamper>
+      </gazebo>
+
+    <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+    <joint name="End_Effector_MIP_Gripper_Interface_to_End_Effector_MIP_Tooth_Left" type="prismatic">
+      <parent link="End_Effector_MIP_Gripper_Interface"/>
+      <child link="End_Effector_MIP_Tooth_Left"/>
+      <origin xyz="0 0.022 -0.08"/>
+      <axis xyz="0 0.1 0"/>
+      <limit
+        effort="1000.0"
+        lower="0.0"
+        upper="0.012"
+        velocity="${prismatic_joint_velocity_sim}"/>
+    </joint>
+
+    <xacro:my_transmission
+      parent="End_Effector_MIP_Gripper_Interface"
+      child="End_Effector_MIP_Tooth_Left"
+      type="translation"
+      mechanical_reduction="${finger_mechanical_reduction}"
+      hardware_interface="PositionJointInterface"/>
+
+      <gazebo reference="End_Effector_MIP_Gripper_Interface_to_End_Effector_MIP_Tooth_Left">
+        <implicitSpringDamper>1</implicitSpringDamper>
+      </gazebo>
+
+      <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                    Gazebo Grasp fix
+
+      ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+      <gazebo>
+        <plugin name="gazebo_grasp_fix" filename="libgazebo_grasp_fix.so">
+          <arm>
+             <arm_name> mip_junior_300_arm </arm_name>
+             <palm_link> End_Effector_MIP_Gripper_Interface  </palm_link>
+             <gripper_link> End_Effector_MIP_Tooth_Left </gripper_link>
+             <gripper_link> End_Effector_MIP_Tooth_Right </gripper_link>
+          </arm>
+          <forces_angle_tolerance>100</forces_angle_tolerance> <!-- 100 in example -->
+          <update_rate>100</update_rate> <!--4 in example-->
+          <grip_count_threshold>2</grip_count_threshold> <!--4 in example -->
+          <max_grip_count>4</max_grip_count> <!--8 in example-->
+          <release_tolerance>0.007</release_tolerance> <!--0.005 in example -->
+          <disable_collisions_on_attach>false</disable_collisions_on_attach> <!-- false in example -->
+          <contact_topic>__default_topic__</contact_topic>
+        </plugin>
+      </gazebo>
+
+  <!-- /////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+
+</robot>

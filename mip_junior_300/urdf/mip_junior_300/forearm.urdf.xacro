@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!--
+Author: Luca Miller
+Date: 08/2020
+Xacro including MIP robotics junior 300 arm section
+-->
+<robot name="mip_junior_300_arm" xmlns:xacro="http://ros.org/wiki/xacro">
+
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                          Constants definition
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+  <!-- Robot's dimensions and mass-->
+  <xacro:property name="length" value="0.160"/>
+  <xacro:property name="width" value="0.160"/>
+  <xacro:property name="height" value="0.553"/>
+  <xacro:property name="mass" value="3"/>
+
+  <!-- Mechanical reductions -->
+  <xacro:property name="forearm_mechanical_reduction" value="1"/>
+
+  <!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                                Links
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+<link name="Forearm_Forearm_Metal">
+  <xacro:visual_and_collision_using_mesh
+    filename="Forearm/Forearm_Metal"
+    roll="0" pitch="0" yaw="${-pi/2}"
+    x="${ -0.4580 - 0.032}" y="${ 0.00154 + 0.030}" z="-0.0993"
+    color="grey" />
+    <xacro:inertial_matrix_box
+      mass="${mass}"
+      length="${length}"
+      width="${width}"
+      height="${height}"/>
+</link>
+<gazebo reference="Forearm_Forearm_Metal">
+  <material> Gazebo/Grey</material>
+</gazebo>
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+  <link name="Forearm_Forearm_Plastic">
+    <xacro:visual_and_collision_using_mesh
+      filename="Forearm/Forearm_Plastic"
+      roll="0" pitch="0" yaw="${-pi/2}"
+      x="${ -0.4580 - 0.032}" y="${ 0.00154 + 0.030}" z="-0.0993"
+      color="blue" />
+  </link>
+  <gazebo reference="Forearm_Forearm_Plastic">
+    <material> Gazebo/Blue</material>
+  </gazebo>
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                              Joints
+
+///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+<joint name="Arm_Arm_Metal_to_Forearm_Forearm_Metal" type="revolute">
+  <parent link="Arm_Arm_Metal"/>
+  <child link="Forearm_Forearm_Metal"/>
+  <origin xyz="0.300 0 -0.055"/>
+  <axis xyz="0 0 1"/>
+  <limit
+    effort="1000.0"
+    lower="${-revolute_joint_limit}"
+    upper="${revolute_joint_limit}"
+    velocity="${revolute_joint_velocity_sim}"/>
+</joint>
+
+<xacro:my_transmission
+  parent="Arm_Arm_Metal"
+  child="Forearm_Forearm_Metal"
+  type="rotation"
+  mechanical_reduction="${forearm_mechanical_reduction}"
+  hardware_interface="PositionJointInterface"/>
+
+  <gazebo reference="Arm_Arm_Metal_to_Forearm_Forearm_Metal">
+    <implicitSpringDamper>1</implicitSpringDamper>
+  </gazebo>
+
+<!-- /////////////////////////////////////////////////////////////////////////////////////////////////// -->
+
+<joint name="Forearm_Forearm_Plastic_" type="fixed">
+  <parent link="Forearm_Forearm_Metal"/>
+  <child link="Forearm_Forearm_Plastic"/>
+  <origin xyz="0 0 0"/>
+</joint>
+
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                              Gazebo colours
+
+///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+<!--
+<gazebo reference="m1">
+  <material> Gazebo/Blue</material>
+</gazebo>
+-->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////
+
+                                              Gazebo transmissions
+
+///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+<!--
+<xacro:my_transmission
+  parent="m1"
+  child="m2"
+  type="translation"
+  mechanical_reduction="${m1_mechanical_reduction}"
+  hardware_interface="PositionJointInterface"/>
+
+<gazebo reference="m1_to_m2">
+  <implicitSpringDamper>1</implicitSpringDamper>
+</gazebo>
+-->
+<!-- ///////////////////////////////////////////////////////////////////////////////////////////////////  -->
+
+
+</robot>
